@@ -79,10 +79,16 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         let taskList = taskLists[indexPath.row]
-        var content = cell.defaultContentConfiguration()
-        cell.contentConfiguration = content
         cell.configure(with: taskList)
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let tasksVC = TasksViewController()
+        let taskList = taskLists[indexPath.row]
+        tasksVC.taskList = taskList
+        navigationController?.pushViewController(tasksVC, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
