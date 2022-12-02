@@ -15,7 +15,7 @@ extension UIAlertController {
         
     func action(with taskList: TaskList?, completion: @escaping (String) -> Void) {
         
-        let doneButton = taskList == nil ? "Save" : "Update"
+        let doneButton = taskList == nil ? "Сохранить" : "Обновить"
                 
         let saveAction = UIAlertAction(title: doneButton, style: .default) { _ in
             guard let newValue = self.textFields?.first?.text else { return }
@@ -23,19 +23,19 @@ extension UIAlertController {
             completion(newValue)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        let cancelAction = UIAlertAction(title: "Отменить", style: .destructive)
         
         addAction(saveAction)
         addAction(cancelAction)
         addTextField { textField in
-            textField.placeholder = "List Name"
+            textField.placeholder = "Название задачи"
             textField.text = taskList?.name
         }
     }
     
     func action(with task: Task?, completion: @escaping (String, String) -> Void) {
                         
-        let title = task == nil ? "Save" : "Update"
+        let title = task == nil ? "Сохранить" : "Обновить"
         
         let saveAction = UIAlertAction(title: title, style: .default) { _ in
             guard let newTask = self.textFields?.first?.text else { return }
@@ -48,18 +48,18 @@ extension UIAlertController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        let cancelAction = UIAlertAction(title: "Отменить", style: .destructive)
         
         addAction(saveAction)
         addAction(cancelAction)
         
         addTextField { textField in
-            textField.placeholder = "New task"
+            textField.placeholder = "Новая задача"
             textField.text = task?.name
         }
         
         addTextField { textField in
-            textField.placeholder = "Note"
+            textField.placeholder = "Комментарий"
             textField.text = task?.note
         }
     }

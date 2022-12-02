@@ -56,7 +56,7 @@ extension TasksViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        section == 0 ? "CURRENT TASKS" : "COMPLETED TASKS"
+        section == 0 ? "ТЕКУЩИЕ ЗАДАЧИ" : "ВЫПОЛНЕННЫЕ ЗАДАЧИ"
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -76,19 +76,19 @@ extension TasksViewController {
         ? currentTasks[indexPath.row]
         : completedTasks[indexPath.row]
         
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { _, _, _ in
             StorageManager.shared.delete(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
+        let editAction = UIContextualAction(style: .normal, title: "Изменить") { [unowned self] _, _, isDone in
             showAlert(with: task) {
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             }
             isDone(true)
         }
         
-        let doneTitle = indexPath.section == 0 ? "Done" : "Undone"
+        let doneTitle = indexPath.section == 0 ? "Выполнена" : "Не выполнена"
         
         let doneAction = UIContextualAction(style: .normal, title: doneTitle) { [weak self] _, _, isDone in
             StorageManager.shared.done(task)
@@ -116,9 +116,9 @@ extension TasksViewController {
 // MARK: - Alert
 extension TasksViewController {
     private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {
-        let title = task != nil ? "Edit Task" : "New Task"
+        let title = task != nil ? "Изменить задачу" : "Новая задача"
         
-        let alert = UIAlertController.createAlert(withTitle: title, andMessage: "What do you want to do?")
+        let alert = UIAlertController.createAlert(withTitle: title, andMessage: "Что вы хотите сделать?")
         
         alert.action(with: task) { newValue, note in
             if let task = task, let completion = completion {

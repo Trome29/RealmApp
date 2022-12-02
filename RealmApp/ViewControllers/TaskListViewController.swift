@@ -19,7 +19,7 @@ class TaskListViewController: UIViewController {
     }()
     
     private let segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["Date", "A-Z"])
+        let segmentedControl = UISegmentedControl(items: ["По дате создания", "По алфавиту"])
         segmentedControl.selectedSegmentIndex = 0
         return segmentedControl
     }()
@@ -54,7 +54,7 @@ class TaskListViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        title = "Tasks list"
+        title = "Список задач"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let navBarAppearance = UINavigationBarAppearance()
@@ -71,11 +71,7 @@ class TaskListViewController: UIViewController {
             target: self,
             action: #selector(addNewTask)
         )
-        navigationItem.leftBarButtonItem  = UIBarButtonItem(
-            barButtonSystemItem: .edit,
-            target: self,
-            action: #selector(addNewTask)
-        )
+        //navigationItem.leftBarButtonItem = editButtonItem
         
         navigationController?.navigationBar.tintColor = .white
     }
@@ -141,19 +137,19 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+        let deleteAction = UIContextualAction(style: .destructive, title: "Удалить") { _, _, _ in
             StorageManager.shared.delete(taskList)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
+        let editAction = UIContextualAction(style: .normal, title: "Изменить") { [unowned self] _, _, isDone in
             showAlert(with: taskList) {
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             }
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
+        let doneAction = UIContextualAction(style: .normal, title: "Выполнена") { _, _, isDone in
             StorageManager.shared.done(taskList)
             tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
@@ -170,8 +166,8 @@ extension TaskListViewController: UITableViewDelegate, UITableViewDataSource {
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
-        let title = taskList != nil ? "Edit List" : "New List"
-        let alert = UIAlertController.createAlert(withTitle: title, andMessage: "Please set title for new task list")
+        let title = taskList != nil ? "Изменить список" : "Новый список"
+        let alert = UIAlertController.createAlert(withTitle: title, andMessage: "Пожалуйста, укажите название задачи")
         
         alert.action(with: taskList) { [weak self] newValue in
             if let taskList = taskList, let completion = completion {
