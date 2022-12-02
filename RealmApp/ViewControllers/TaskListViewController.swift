@@ -19,7 +19,7 @@ class TaskListViewController: UIViewController {
     }()
     
     private let segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["По дате", "По алфавиту"])
+        let segmentedControl = UISegmentedControl(items: ["Date", "A-Z"])
         segmentedControl.selectedSegmentIndex = 0
         return segmentedControl
     }()
@@ -38,6 +38,7 @@ class TaskListViewController: UIViewController {
         createTempData()
         taskLists = StorageManager.shared.realm.objects(TaskList.self)
         
+        segmentedControl.addTarget(self, action: #selector(sortingList), for: .valueChanged)
         setConstraints()
     }
     
@@ -79,21 +80,10 @@ class TaskListViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
-    //    private func sortingList(_ sender: UISegmentedControl) {
-    //        taskLists = sender.selectedSegmentIndex == 0
-    //            ? taskLists.sorted(byKeyPath: "date")
-    //            : taskLists.sorted(byKeyPath: "name")
-    //        tableView.reloadData()
-    //    }
-    
     private func createTempData() {
         DataManager.shared.createTempData { [unowned self] in
             tableView.reloadData()
         }
-    }
-    
-    private func setupStackView() {
-        
     }
     
     private func setConstraints() {
@@ -112,6 +102,13 @@ class TaskListViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
+    }
+    
+    @objc private func sortingList() {
+        taskLists = segmentedControl.selectedSegmentIndex == 0
+        ? taskLists.sorted(byKeyPath: "date")
+        : taskLists.sorted(byKeyPath: "name")
+        tableView.reloadData()
     }
     
     @objc private func addNewTask() {
