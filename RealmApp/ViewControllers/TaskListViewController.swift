@@ -8,16 +8,37 @@
 import UIKit
 import RealmSwift
 
-class TaskListViewController: UITableViewController {
+class TaskListViewController: UIViewController {
     
     private let cellID = "cell"
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .white
+        tableView.separatorStyle = .singleLine
+        return tableView
+    }()
+    
+    private let segmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["По дате", "По алфавиту"])
+        segmentedControl.selectedSegmentIndex = 0
+        return segmentedControl
+    }()
+    
     var taskLists: Results<TaskList>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupView()
+        setupNavigationBar()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         createTempData()
         taskLists = StorageManager.shared.realm.objects(TaskList.self)
+        
+        setConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,9 +50,8 @@ class TaskListViewController: UITableViewController {
     private func setupView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         view.backgroundColor = .white
-        setupNavigationBar()
     }
-
+    
     private func setupNavigationBar() {
         title = "Tasks list"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -59,10 +79,39 @@ class TaskListViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
+    //    private func sortingList(_ sender: UISegmentedControl) {
+    //        taskLists = sender.selectedSegmentIndex == 0
+    //            ? taskLists.sorted(byKeyPath: "date")
+    //            : taskLists.sorted(byKeyPath: "name")
+    //        tableView.reloadData()
+    //    }
+    
     private func createTempData() {
         DataManager.shared.createTempData { [unowned self] in
             tableView.reloadData()
         }
+    }
+    
+    private func setupStackView() {
+        
+    }
+    
+    private func setConstraints() {
+        
+        let stackView = UIStackView(arrangedSubviews: [segmentedControl, tableView])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 0
+        stackView.distribution = .equalSpacing
+        
+        view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        ])
     }
     
     @objc private func addNewTask() {
@@ -70,20 +119,21 @@ class TaskListViewController: UITableViewController {
     }
 }
 
-// MARK: - Table View Data Source
-extension TaskListViewController {
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+// MARK: - Table View
+extension TaskListViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         taskLists.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         let taskList = taskLists[indexPath.row]
         cell.configure(with: taskList)
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let tasksVC = TasksViewController()
         let taskList = taskLists[indexPath.row]
@@ -91,7 +141,7 @@ extension TaskListViewController {
         navigationController?.pushViewController(tasksVC, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
@@ -119,7 +169,7 @@ extension TaskListViewController {
     }
 }
 
-// MARK: - Alert
+// MARK: - Extension
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
@@ -145,3 +195,5 @@ extension TaskListViewController {
         }
     }
 }
+
+
