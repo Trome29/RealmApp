@@ -71,7 +71,6 @@ class TaskListViewController: UIViewController {
             target: self,
             action: #selector(addNewTask)
         )
-        //navigationItem.leftBarButtonItem = editButtonItem
         
         navigationController?.navigationBar.tintColor = .white
     }

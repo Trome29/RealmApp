@@ -36,7 +36,7 @@ class TasksViewController: UITableViewController {
             target: self,
             action: #selector(addButtonPressed)
         )
-        navigationItem.rightBarButtonItems = [addButton, editButtonItem]
+        navigationItem.rightBarButtonItems = [addButton]
         currentTasks = taskList.tasks.filter("isComplete = false")
         completedTasks = taskList.tasks.filter("isComplete = true")
     }
@@ -57,6 +57,10 @@ extension TasksViewController {
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         section == 0 ? "ТЕКУЩИЕ ЗАДАЧИ" : "ВЫПОЛНЕННЫЕ ЗАДАЧИ"
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
