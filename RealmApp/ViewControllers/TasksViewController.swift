@@ -18,7 +18,6 @@ class TasksViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         title = taskList.name
         
         setupView()
